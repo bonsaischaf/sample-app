@@ -6,8 +6,8 @@ pipeline {
         withMaven(
           maven: '3.5.2',
           jdk: '1.8'
-          )
-          sh 'mvn package'
+          ),
+        sh 'mvn package'
         }
     }
   }
