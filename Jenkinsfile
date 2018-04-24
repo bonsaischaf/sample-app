@@ -11,8 +11,8 @@ pipeline {
 
     PACKER_CLIENT_SECRET=credentials('PACKER_CLIENT_SECRET_CSCHAFFE')
     WORKSPACE=pwd()
-    GIT_COMMIT="${env.GIT_COMMIT}"
-    BUILD_ID="${env.BUILD_ID}"
+    GIT_COMMIT="${GIT_COMMIT}"
+    BUILD_ID="${BUILD_ID}"
   }
   stages {
     stage('build jar') {
