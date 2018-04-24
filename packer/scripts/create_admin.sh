@@ -1,0 +1,7 @@
+echo "creating admin user"
+admin="myadmin"
+useradd -m -r ${admin}
+mkdir -p /home/${admin}/.ssh
+cat <<EOF > /home/${admin}/.ssh/authorized_keys;
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDXYHyO3p02EM+GkTqUKclOW7ONeJa7GZkp8tYYmG0KlB4YTR8hwxuQ0vOQGKo+7LyTsJHw7BuITMkkxaoeCUKZ9gU5/WGe10lCpJXBCPJun09EYQHawDr02N5jgGFkqKotfMzOIcNi7USWxwct/a41f0eHlZVeyUpDnyYgS3/DPzmB1Vbi1DzPQA1Vetyd5D+3jGizkeT5HaGKu6mG1JmzbJqLTggLbTdJlqSRoZ2TGAgLwMoAVZWIeRiQsz2JYP1H3bRwZ/CBpTvyYq7Ucaw8Fe1IU4c5AehXOTCE3B7/6401T8Z66v7R97TP6dUtc/2lOhgY200H2Qgapcb8wf7+1ugUDrzW+Bu0hmadbMPDi7I1pvu42Zc43NYoQKOHIHEEYtU8EBhAh5oAbob6j/kwIsTIEKvVmk45jdJppS9EKBSZTiWPLpOymwbfQx/WlN+cZkrJBoy4dr5R2FMPgxXzbYDZfWD25cTNzRT9bNyVwOvEktPC4w9lA4wmjEC1bG5qyPi5cwyR6sETnzzmANsT7dpFP6DTLpE94i4zVIjoBu0Q4jKKVEfPtU4Py4/ZY1pbx22p5I9p35NrgJgKV/CKsXZ9DLNGRkd2lEqBBUn2UfzS+zWz3ivKtHbIuB9OgxwjCxqRd6UTybAvO1THqz+mKfap26c4oFkZ+uIZ+U/0GQ== bonsaischaf
+EOF
