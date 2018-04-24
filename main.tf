@@ -54,6 +54,7 @@ resource "azurerm_network_interface" "test" {
     name                          = "testconfiguration1"
     subnet_id                     = "${azurerm_subnet.test.id}"
     private_ip_address_allocation = "dynamic"
+    public_ip_address_id          = "${azurerm_public_ip.test.id}"
   }
 }
 
@@ -85,6 +86,22 @@ resource "azurerm_virtual_machine" "test" {
   os_profile_linux_config {
     disable_password_authentication = false
   }
+
+  tags {
+    environment = "staging"
+  }
+}
+
+
+#-----------------------------------------------------------------------
+# https://www.terraform.io/docs/providers/azurerm/r/public_ip.html
+#-----------------------------------------------------------------------
+
+resource "azurerm_public_ip" "test" {
+  name                         = "acceptanceTestPublicIp1"
+  location                     = "${azurerm_resource_group.test.location}"
+  resource_group_name          = "${azurerm_resource_group.test.name}"
+  public_ip_address_allocation = "dynamic"
 
   tags {
     environment = "staging"
