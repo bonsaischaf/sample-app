@@ -8,6 +8,7 @@ pipeline {
     PACKER_LOCATION="westeurope"
     PACKER_TENANT_ID="787717a7-1bf4-4466-8e52-8ef7780c6c42"
     PACKER_OBJECT_ID="56e89fa0-e748-49f4-9ff0-0d8b9e3d4057"
+    WORKSPACE=pwd()
   }
   stages {
     stage('build jar') {
@@ -28,10 +29,10 @@ pipeline {
 
           echo 'validating packer file'
           sh 'cd packer'
-          sh '${PACKER_HOME}/packer validate azure.json'
+          sh '${PACKER_HOME}/packer validate ${WORKSPACE}/packer/azure.json'
 
           echo 'building packer file'
-          echo 'skipping: ${PACKER_HOME}/packer validate packer/azure.json'
+          echo 'skipping: ${PACKER_HOME}/packer build ${WORKSPACE}/packer/azure.json'
 
         }
       }
