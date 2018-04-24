@@ -10,6 +10,7 @@ pipeline {
     PACKER_CLIENT_SECRET=credentials('PACKER_CLIENT_SECRET_CSCHAFFE')
     WORKSPACE=pwd()
   }
+  
   stages {
     stage('build jar') {
         steps {
