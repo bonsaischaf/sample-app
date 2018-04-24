@@ -15,6 +15,8 @@ pipeline {
     BUILD_ID="${BUILD_ID}"
   }
   stages {
+
+
     stage('build jar') {
         steps {
         withMaven(
@@ -26,10 +28,11 @@ pipeline {
           }
         }
     }
+
+
     stage('packer') {
       steps {
         wrap([$class: 'AnsiColorBuildWrapper', 'colormapName': 'xterm']){
-
 
           echo 'validating packer file'
           sh '${PACKER_HOME}/packer validate ${WORKSPACE}/packer/azure.json'
@@ -38,10 +41,17 @@ pipeline {
           echo '$GIT_COMMIT'
           echo '$BUILD_ID'
           //sh '${PACKER_HOME}/packer build ${WORKSPACE}/packer/azure.json'
-
         }
       }
+    }
 
+    stage('terraform') {
+      steps {
+        wrap([$class: 'AnsiColorBuildWrapper', 'colormapName': 'xterm']){
+
+          echo '--- include terraform integration here ---'
+        }
+      }
     }
   }
 }
