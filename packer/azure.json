@@ -3,7 +3,7 @@
     {
       "type": "azure-arm",
 
-      "managed_image_name": "cschaffe-aic-{{timestamp}}",
+      "managed_image_name": "cschaffe-aic-{{ user `GIT_COMMIT` }}-{{ user `BUILD_ID` }}",
       "managed_image_resource_group_name": "{{ user `IMAGE_RESOURCE_GROUP_NAME` }}",
 
       "subscription_id": "{{ user `PACKER_SUBSCRIPTION_ID` }}",
@@ -53,6 +53,8 @@
     "PACKER_TENANT_ID":       "{{ env `PACKER_TENANT_ID` }}",
     "PACKER_OBJECT_ID":       "{{ env `PACKER_OBJECT_ID` }}",
 
-    "IMAGE_RESOURCE_GROUP_NAME": "cschaffe-test"
+    "IMAGE_RESOURCE_GROUP_NAME": "cschaffe-test",
+    "GIT_COMMIT": "{{ env `GIT_COMMIT` }}",
+    "BUILD_ID" : "{{ env `BUILD_ID` }}"
     }
 }

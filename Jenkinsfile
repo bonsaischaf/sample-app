@@ -11,6 +11,8 @@ pipeline {
 
     PACKER_CLIENT_SECRET=credentials('PACKER_CLIENT_SECRET_CSCHAFFE')
     WORKSPACE=pwd()
+    GIT_COMMIT=sh(git log -n 1 | grep commit | cut -d' ' -f2 | cut -c1-8)
+    BUILD_ID=env.BUILD_ID
   }
   stages {
     stage('build jar') {
@@ -33,7 +35,9 @@ pipeline {
           sh '${PACKER_HOME}/packer validate ${WORKSPACE}/packer/azure.json'
 
           echo 'building packer file'
-          sh '${PACKER_HOME}/packer build ${WORKSPACE}/packer/azure.json'
+          echo '$GIT_COMMIT'
+          echo '$BUILD_ID'
+          //sh '${PACKER_HOME}/packer build ${WORKSPACE}/packer/azure.json'
 
         }
       }
