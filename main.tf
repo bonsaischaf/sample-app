@@ -12,7 +12,7 @@ terraform {
 }
 
 resource "azurerm_resource_group" "test" {
-  name = "cschaffe-tf-target"
+  name = "cschaffe-test"
   location = "westeurope"
 }
 
