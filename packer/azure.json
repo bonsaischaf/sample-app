@@ -28,16 +28,16 @@
   "provisioners": [
        {
          "destination": "/tmp/sample-app.jar",
-         "source": "sample-app/target/gs-spring-boot-0.1.0.jar",
+         "source": "../target/gs-spring-boot-0.1.0.jar",
          "type": "file"
        },
        {
         "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
         "scripts": [
-           "packer/scripts/create_admin.sh",
-           "packer/scripts/java.sh",
-           "packer/scripts/deploy.sh",
-           "packer/scripts/deprovision.sh"
+           "scripts/create_admin.sh",
+           "scripts/java.sh",
+           "scripts/deploy.sh",
+           "scripts/deprovision.sh"
          ],
        "inline_shebang": "/bin/sh -x",
        "type": "shell"
