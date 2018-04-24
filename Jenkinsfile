@@ -25,10 +25,10 @@ pipeline {
       steps {
         wrap([$class: 'AnsiColorBuildWrapper', 'colormapName': 'xterm']){
 
-          echo 'currently in $(pwd)'
 
           echo 'validating packer file'
-          sh '${PACKER_HOME}/packer validate packer/azure.json'
+          sh 'cd packer'
+          sh '${PACKER_HOME}/packer validate azure.json'
 
           echo 'building packer file'
           echo 'skipping: ${PACKER_HOME}/packer validate packer/azure.json'
