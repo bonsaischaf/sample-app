@@ -11,7 +11,7 @@ pipeline {
 
     PACKER_CLIENT_SECRET=credentials('PACKER_CLIENT_SECRET_CSCHAFFE')
     WORKSPACE=pwd()
-    GIT_COMMIT=sh('git log -n 1 | grep commit | cut -d' ' -f2 | cut -c1-8')
+    GIT_COMMIT=env.GIT_COMMIT
     BUILD_ID=env.BUILD_ID
   }
   stages {
