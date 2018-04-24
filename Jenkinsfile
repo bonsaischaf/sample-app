@@ -10,7 +10,7 @@ pipeline {
     PACKER_CLIENT_SECRET=credentials('PACKER_CLIENT_SECRET_CSCHAFFE')
     WORKSPACE=pwd()
   }
-
+  
   stages {
     stage('build jar') {
         steps {
@@ -32,7 +32,7 @@ pipeline {
           sh '${PACKER_HOME}/packer validate ${WORKSPACE}/packer/azure.json'
 
           echo 'building packer file'
-          //sh '${PACKER_HOME}/packer build ${WORKSPACE}/packer/azure.json'
+          sh '${PACKER_HOME}/packer build ${WORKSPACE}/packer/azure.json'
 
         }
       }
