@@ -7,6 +7,7 @@ deploy to azure:
 
 
 tree:
+<pre>
 .
 ├── packer.env
 ├── repo
@@ -47,3 +48,4 @@ tree:
 └── Vagrantfile
 
 18 directories, 19 files
+</pre>
