@@ -28,7 +28,6 @@ pipeline {
 
 
           echo 'validating packer file'
-          sh 'cd packer'
           sh '${PACKER_HOME}/packer validate ${WORKSPACE}/packer/azure.json'
 
           echo 'building packer file'
