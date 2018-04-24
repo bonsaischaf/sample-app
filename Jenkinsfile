@@ -32,7 +32,7 @@ pipeline {
           sh '${PACKER_HOME}/packer validate ${WORKSPACE}/packer/azure.json'
 
           echo 'building packer file'
-          sh '${ACKER_HOME}/packer build ${WORKSPACE}/packer/azure.json'
+          sh '${PACKER_HOME}/packer build ${WORKSPACE}/packer/azure.json'
 
         }
       }
