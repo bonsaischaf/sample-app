@@ -28,7 +28,7 @@
   "provisioners": [
        {
          "destination": "/tmp/sample-app.jar",
-         "source": "../target/gs-spring-boot-0.1.0.jar",
+         "source": "target/gs-spring-boot-0.1.0.jar",
          "type": "file"
        },
        {
