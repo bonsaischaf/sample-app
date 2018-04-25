@@ -29,43 +29,44 @@ pipeline {
         }
     }
 
+    if (env.BRANCH_NAME == "release"){
+      stage('packer') {
+        steps {
+          wrap([$class: 'AnsiColorBuildWrapper', 'colormapName': 'xterm']){
 
-    stage('packer') {
-      steps {
-        wrap([$class: 'AnsiColorBuildWrapper', 'colormapName': 'xterm']){
+            echo 'validating packer file'
+            sh '${PACKER_HOME}/packer validate ${WORKSPACE}/packer/azure.json'
 
-          echo 'validating packer file'
-          sh '${PACKER_HOME}/packer validate ${WORKSPACE}/packer/azure.json'
-
-          echo 'building packer file'
-          sh '${PACKER_HOME}/packer build ${WORKSPACE}/packer/azure.json'
+            echo 'building packer file'
+            sh '${PACKER_HOME}/packer build ${WORKSPACE}/packer/azure.json'
+          }
         }
       }
-    }
 
-    stage('terraform'){
-          environment {
-            TERRAFORM_HOME = tool name: 'terraform-0.11.3'
-            ARM_SUBSCRIPTION_ID = "${PACKER_SUBSCRIPTION_ID}"
-            ARM_CLIENT_ID = "{PACKER_CLIENT_ID}"
-            ARM_CLIENT_SECRET = credentials('PACKER_CLIENT_SECRET_CSCHAFFE')
-            ARM_TENANT_ID = "${PACKER_TENANT_ID}"
-            ARM_ENVIRONMENT = "public"
-            TF_VAR_user = "cschaffe"
-            TF_VAR_password = credentials('PACKER_CLIENT_SECRET_CSCHAFFE')
-            TF_VAR_build_id = "${env.BUILD_ID}"
-          }
-          steps {
-            wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-              dir('terraform') {
-                script {
-                  sh "${TERRAFORM_HOME}/terraform init -input=false -backend-config=\"key=${TF_VAR_user}.terraform.tfstate\""
-                  sh ("${TERRAFORM_HOME}/terraform plan -out=tfplan -detailed-exitcode -input=false")
-                  sh "${TERRAFORM_HOME}/terraform apply -input=false -auto-approve tfplan"
-              }
+      stage('terraform'){
+        environment {
+          TERRAFORM_HOME = tool name: 'terraform-0.11.3'
+          ARM_SUBSCRIPTION_ID = "${PACKER_SUBSCRIPTION_ID}"
+          ARM_CLIENT_ID = "${PACKER_CLIENT_ID}"
+          ARM_CLIENT_SECRET = credentials('PACKER_CLIENT_SECRET_CSCHAFFE')
+          ARM_TENANT_ID = "${PACKER_TENANT_ID}"
+          ARM_ENVIRONMENT = "public"
+          TF_VAR_user = "cschaffe"
+          TF_VAR_password = credentials('PACKER_CLIENT_SECRET_CSCHAFFE')
+          TF_VAR_build_id = "${env.BUILD_ID}"
+        }
+        steps {
+          wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
+            dir('terraform') {
+              script {
+                sh "${TERRAFORM_HOME}/terraform init -input=false -backend-config=\"key=${TF_VAR_user}.terraform.tfstate\""
+                sh ("${TERRAFORM_HOME}/terraform plan -out=tfplan -detailed-exitcode -input=false")
+                sh "${TERRAFORM_HOME}/terraform apply -input=false -auto-approve tfplan"
               }
             }
           }
+        }
+      }
     }
   }
   post {
