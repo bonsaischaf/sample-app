@@ -8,3 +8,8 @@
 variable "sample-app-count" {
   default = 2
 }
+
+
+variable "my-resource-group" {
+  default = "cschaffe-test"
+}

@@ -12,7 +12,7 @@ terraform {
 }
 
 resource "azurerm_resource_group" "test" {
-  name = "cschaffe-test"
+  name = "${var.my-resource-group}"
   location = "westeurope"
 }
 
@@ -237,4 +237,11 @@ resource "azurerm_lb_rule" "test" {
   backend_port                   = 8080
   frontend_ip_configuration_name = "PublicIPAddress"
   backend_address_pool_id = "${azurerm_lb_backend_address_pool.test-LB.id}"
+}
+
+resource "azurerm_lb_probe" "test-LB" {
+  resource_group_name = "${azurerm_resource_group.test.name}"
+  loadbalancer_id     = "${azurerm_lb.test-LB.id}"
+  name                = "ssh-running-probe"
+  port                = 22
 }
