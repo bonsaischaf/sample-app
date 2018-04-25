@@ -74,7 +74,7 @@ pipeline {
             dir('terraform') {
                 sh "${TERRAFORM_HOME}/terraform init -input=false -backend-config=\"key=${TF_VAR_user}.terraform.tfstate\""
                 sh "${TERRAFORM_HOME}/terraform plan -out=tfplan -detailed-exitcode -input=false;"
-                sh "${TERRAFORM_HOME}/terraform apply -input=false -auto-approve"
+                sh "${TERRAFORM_HOME}/terraform apply -input=false -auto-approve \"tfplan\""
             }
           }
         }
