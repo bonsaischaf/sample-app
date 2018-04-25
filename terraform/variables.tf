@@ -13,3 +13,7 @@ variable "sample-app-count" {
 variable "my-resource-group" {
   default = "cschaffe-test"
 }
+
+variable "user" {}
+
+variable "password" {}
