@@ -74,7 +74,7 @@ pipeline {
             dir('terraform') {
                 sh "${TERRAFORM_HOME}/terraform init -input=false -backend-config=\"key=${TF_VAR_user}.terraform.tfstate\""
                 echo 'terraform plan'
-                sh "${TERRAFORM_HOME}/terraform plan -out=tfplan -detailed-exitcode -input=false"
+                sh "${TERRAFORM_HOME}/terraform plan -out=tfplan"
                 echo 'terraform apply'
                 sh "${TERRAFORM_HOME}/terraform apply \"tfplan\""
                 echo 'done'
