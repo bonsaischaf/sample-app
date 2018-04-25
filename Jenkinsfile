@@ -54,7 +54,7 @@ pipeline {
             ARM_TENANT_ID = "${PACKER_TENANT_ID}"
             ARM_ENVIRONMENT = "public"
             TF_VAR_user = "cschaffe"
-            TF_VAR_password = credentials('PACKER_CL')
+            TF_VAR_password = credentials('PACKER_CLIENT_SECRET_CSCHAFFE')
             TF_VAR_build_id = "${env.BUILD_ID}"
           }
           steps {
