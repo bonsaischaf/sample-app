@@ -76,7 +76,7 @@ pipeline {
                 echo 'terraform plan'
                 sh "${TERRAFORM_HOME}/terraform plan -out=tfplan -detailed-exitcode -input=false"
                 echo 'terraform apply'
-                sh "${TERRAFORM_HOME}/terraform apply -input=false \"tfplan\""
+                sh "${TERRAFORM_HOME}/terraform apply \"tfplan\""
                 echo 'done'
             }
           }
