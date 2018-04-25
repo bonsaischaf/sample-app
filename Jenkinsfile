@@ -35,7 +35,7 @@ pipeline {
       when {
         expression {
           "${env.BRANCH_NAME}" == "packer" ||
-          "${env.BRANCH_NAME}" == "test" ||
+          //"${env.BRANCH_NAME}" == "test" ||
           "${env.BRANCH_NAME}" == "release"
         }
       }
