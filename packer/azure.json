@@ -3,7 +3,7 @@
     {
       "type": "azure-arm",
 
-      "managed_image_name": "cschaffe-sample-app",
+      "managed_image_name": "{{ user `IMAGE_NAME` }}",
       "managed_image_resource_group_name": "{{ user `IMAGE_RESOURCE_GROUP_NAME` }}",
 
       "subscription_id": "{{ user `PACKER_SUBSCRIPTION_ID` }}",
@@ -54,7 +54,6 @@
     "PACKER_OBJECT_ID":       "{{ env `PACKER_OBJECT_ID` }}",
 
     "IMAGE_RESOURCE_GROUP_NAME": "cschaffe-img",
-    "GIT_COMMIT": "{{ env `GIT_COMMIT` }}",
-    "BUILD_ID" : "{{ env `BUILD_ID` }}"
+    "IMAGE_NAME": "{{ env `TF_VAR_IMAGE_NAME` }}",
     }
 }
