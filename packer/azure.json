@@ -54,6 +54,6 @@
     "PACKER_OBJECT_ID":       "{{ env `PACKER_OBJECT_ID` }}",
 
     "IMAGE_RESOURCE_GROUP_NAME": "cschaffe-img",
-    "IMAGE_NAME": "{{ env `TF_VAR_IMAGE_NAME` }}",
-    }
+    "IMAGE_NAME": "{{ env `TF_VAR_IMAGE_NAME` }}"
+  }
 }
