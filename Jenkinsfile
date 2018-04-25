@@ -38,9 +38,7 @@ pipeline {
           sh '${PACKER_HOME}/packer validate ${WORKSPACE}/packer/azure.json'
 
           echo 'building packer file'
-          echo '$GIT_COMMIT'
-          echo '$BUILD_ID'
-          //sh '${PACKER_HOME}/packer build ${WORKSPACE}/packer/azure.json'
+          sh '${PACKER_HOME}/packer build ${WORKSPACE}/packer/azure.json'
         }
       }
     }
