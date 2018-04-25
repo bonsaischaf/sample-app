@@ -31,7 +31,12 @@ pipeline {
 
 
     stage('packer') {
-      when { environment name: "BRANCH_NAME", value: "release" }
+      when {
+        expression {
+          "${env.BRANCH_NAME}" == "packer" ||
+          "${env.BRANCH_NAME}" == "release"
+        }
+      }
       steps {
         wrap([$class: 'AnsiColorBuildWrapper', 'colormapName': 'xterm']){
 
