@@ -256,4 +256,5 @@ resource "azurerm_lb_probe" "test-LB" {
   name                = "http-running-probe"
   port                = 8080
   protocol            = "HTTP"
+  request_path        = "/"
 }
