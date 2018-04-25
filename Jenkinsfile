@@ -34,6 +34,7 @@ pipeline {
       when {
         expression {
           "${env.BRANCH_NAME}" == "packer" ||
+          "${env.BRANCH_NAME}" == "test" ||
           "${env.BRANCH_NAME}" == "release"
         }
       }
@@ -50,7 +51,12 @@ pipeline {
     }
 
     stage('terraform'){
-      when { environment name: "BRANCH_NAME", value: "release" }
+      when {
+        expression {
+          "${env.BRANCH_NAME}" == "test" ||
+          "${env.BRANCH_NAME}" == "release"
+        }
+      }
       environment {
           TERRAFORM_HOME = tool name: 'terraform-0.11.3'
           ARM_SUBSCRIPTION_ID = "${PACKER_SUBSCRIPTION_ID}"
