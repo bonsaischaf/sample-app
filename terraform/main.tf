@@ -28,11 +28,11 @@ resource "azurerm_resource_group" "test" {
 
 #Assume that custom image has been already created in the 'customimage' resource group
 data "azurerm_resource_group" "image" {
-  name = "cschaffe-test"
+  name = "cschaffe-img"
 }
 
 data "azurerm_image" "image" {
-  name                = "cschaffe-aic-1524570922"
+  name                = "cschaffe-sample-app"
   resource_group_name = "${data.azurerm_resource_group.image.name}"
 }
 
@@ -64,7 +64,11 @@ resource "azurerm_network_interface" "test" {
     name                          = "testconfiguration1"
     subnet_id                     = "${azurerm_subnet.test.id}"
     private_ip_address_allocation = "dynamic"
-    public_ip_address_id          = "${azurerm_public_ip.test.*.id[count.index]}"
+    #public_ip_address_id          = "${azurerm_public_ip.test.*.id[count.index]}"
+
+    # Wir können das availability set nirgends einbinden. Deswegen geben wir den lb-backend-address-pool an,
+    # in dem die VM erscheinen soll. Diese VMs MÜSSEN auch im selben availability set sein, da sonst terraform meckert.
+    load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.test-LB.id}"]
   }
 }
 
@@ -73,6 +77,7 @@ resource "azurerm_virtual_machine" "test" {
   name                  = "acctvm-${count.index}"
   location              = "${azurerm_resource_group.test.location}"
   resource_group_name   = "${azurerm_resource_group.test.name}"
+  availability_set_id   = "${azurerm_availability_set.test.id}"
 
   #Alle heissen test. Wir wollen aber die i-te Instanz. deswegen wird aus xyz.test.* eine Liste aller
   # azurerm_network_interface instanzen gezogen und indiziert. in ${...} steht terraform code.
@@ -114,17 +119,17 @@ resource "azurerm_virtual_machine" "test" {
 # https://www.terraform.io/docs/providers/azurerm/r/public_ip.html
 #-----------------------------------------------------------------------
 
-resource "azurerm_public_ip" "test" {
-  count                        = "${var.sample-app-count}"
-  name                         = "PublicIp1-${count.index}"
-  location                     = "${azurerm_resource_group.test.location}"
-  resource_group_name          = "${azurerm_resource_group.test.name}"
-  public_ip_address_allocation = "dynamic"
-
-  tags {
-    environment = "staging"
-  }
-}
+# resource "azurerm_public_ip" "test" {
+#   count                        = "${var.sample-app-count}"
+#   name                         = "PublicIp1-${count.index}"
+#   location                     = "${azurerm_resource_group.test.location}"
+#   resource_group_name          = "${azurerm_resource_group.test.name}"
+#   public_ip_address_allocation = "dynamic"
+#
+#   tags {
+#     environment = "staging"
+#   }
+# }
 
 
 #-----------------------------------------------------------------------
@@ -149,20 +154,87 @@ resource "azurerm_network_security_group" "test" {
     destination_address_prefix = "*"
   }
 
-  security_rule {
-    name                       = "AllowSSH"
-    priority                   = 199
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
+  # security_rule {
+  #   name                       = "AllowSSH"
+  #   priority                   = 199
+  #   direction                  = "Inbound"
+  #   access                     = "Allow"
+  #   protocol                   = "Tcp"
+  #   source_port_range          = "*"
+  #   destination_port_range     = "22"
+  #   source_address_prefix      = "*"
+  #   destination_address_prefix = "*"
+  # }
 
 
   tags {
-    environment = "Production"
+    environment = "staging"
   }
+}
+
+
+#-----------------------------------------------------------------------
+# https://www.terraform.io/docs/providers/azurerm/r/availability_set.html
+#-----------------------------------------------------------------------
+
+resource "azurerm_availability_set" "test" {
+  name                = "sample-app-AvailabilitySet1"
+  location            = "${azurerm_resource_group.test.location}"
+  resource_group_name = "${azurerm_resource_group.test.name}"
+  #
+  managed             = true
+
+  tags {
+    environment = "staging"
+  }
+}
+
+##         ######
+##         ##   ##
+##         ##   ##
+##         ######
+##         ##   ##
+##         ##   ##
+#########  ######
+
+#-----------------------------------------------------------------------
+# https://www.terraform.io/docs/providers/azurerm/r/loadbalancer.html#sku
+#-----------------------------------------------------------------------
+
+# Public (Fronntend) IP des LBs
+resource "azurerm_public_ip" "test-LB" {
+  name                         = "PublicIPForLB"
+  location                     = "${azurerm_resource_group.test.location}"
+  resource_group_name          = "${azurerm_resource_group.test.name}"
+  public_ip_address_allocation = "dynamic"
+}
+
+# Loadbalancer
+resource "azurerm_lb" "test-LB" {
+  name                = "TestLoadBalancer"
+  location            = "${azurerm_resource_group.test.location}"
+  resource_group_name = "${azurerm_resource_group.test.name}"
+
+  frontend_ip_configuration {
+    name                 = "PublicIPAddress"
+    public_ip_address_id = "${azurerm_public_ip.test-LB.id}"
+  }
+}
+
+# Adress pool wird in den network interfaces referenziert.
+resource "azurerm_lb_backend_address_pool" "test-LB" {
+  resource_group_name = "${azurerm_resource_group.test.name}"
+  loadbalancer_id     = "${azurerm_lb.test-LB.id}"
+  name                = "BackEndAddressPool"
+}
+
+resource "azurerm_lb_rule" "test" {
+  resource_group_name            = "${azurerm_resource_group.test.name}"
+  loadbalancer_id                = "${azurerm_lb.test-LB.id}"
+  name                           = "LBRule"
+  protocol                       = "Tcp"
+  frontend_port                  = 80
+  backend_port                   = 8080
+  frontend_ip_configuration_name = "PublicIPAddress"
+  backend_address_pool_id = "${azurerm_lb_backend_address_pool.test-LB.id}"
 }
