@@ -31,7 +31,7 @@ pipeline {
 
 
     stage('packer') {
-      when { environment name "BRANCH_NAME", value: "release" }
+      when { environment name: "BRANCH_NAME", value: "release" }
       steps {
         wrap([$class: 'AnsiColorBuildWrapper', 'colormapName': 'xterm']){
 
@@ -45,7 +45,7 @@ pipeline {
     }
 
     stage('terraform'){
-      when { environment name "BRANCH_NAME", value: "release" }
+      when { environment name: "BRANCH_NAME", value: "release" }
       environment {
           TERRAFORM_HOME = tool name: 'terraform-0.11.3'
           ARM_SUBSCRIPTION_ID = "${PACKER_SUBSCRIPTION_ID}"
