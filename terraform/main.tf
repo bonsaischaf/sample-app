@@ -16,6 +16,11 @@ resource "azurerm_resource_group" "test" {
   location = "westeurope"
 }
 
+##       ##   ###        ###
+ ##     ##    ## ##    ## ##
+   ## ##      ##  ## ##   ##
+    ###       ##   ###    ##
+     #        ##    #     ##
 
 #-----------------------------------------------------------------------
 # https://www.terraform.io/docs/providers/azurerm/r/virtual_machine.html
@@ -46,7 +51,12 @@ resource "azurerm_subnet" "test" {
 }
 
 resource "azurerm_network_interface" "test" {
-  name                = "acctni"
+  # count wird angelegt und auf var.sample-app-count (idx=0, val=1) initialisiert.
+  # Beim nächsten Zugriff wird ein zweiter Parameter count angelegt (idx+=1, val=1)...
+
+  #count ist ein terraform-keyword und bescshreibt, wieviele Instanzen davon angelegt werden sollen.
+  count               = "${var.sample-app-count}"
+  name                = "acctni-${count.index}"
   location            = "${azurerm_resource_group.test.location}"
   resource_group_name = "${azurerm_resource_group.test.name}"
 
@@ -54,15 +64,19 @@ resource "azurerm_network_interface" "test" {
     name                          = "testconfiguration1"
     subnet_id                     = "${azurerm_subnet.test.id}"
     private_ip_address_allocation = "dynamic"
-    public_ip_address_id          = "${azurerm_public_ip.test.id}"
+    public_ip_address_id          = "${azurerm_public_ip.test.*.id[count.index]}"
   }
 }
 
 resource "azurerm_virtual_machine" "test" {
-  name                  = "acctvm"
+  count                 = "${var.sample-app-count}"
+  name                  = "acctvm-${count.index}"
   location              = "${azurerm_resource_group.test.location}"
   resource_group_name   = "${azurerm_resource_group.test.name}"
-  network_interface_ids = ["${azurerm_network_interface.test.id}"]
+
+  #Alle heissen test. Wir wollen aber die i-te Instanz. deswegen wird aus xyz.test.* eine Liste aller
+  # azurerm_network_interface instanzen gezogen und indiziert. in ${...} steht terraform code.
+  network_interface_ids = ["${azurerm_network_interface.test.*.id[count.index]}"]
   vm_size               = "Standard_A0"
 
   storage_image_reference {
@@ -70,7 +84,10 @@ resource "azurerm_virtual_machine" "test" {
   }
 
   storage_os_disk {
-    name              = "myosdisk1"
+    # in azure MUSS jede Instanz eine eigene OS-Disk haben.
+    # Sie ist eine inline Resource und wird damit automatisch angelegt
+    # !!! Es gibt aber einen Namenskonflikt, deswegen muss die Benamung eindeutig sein:
+    name              = "myosdisk-${count.index}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -98,7 +115,8 @@ resource "azurerm_virtual_machine" "test" {
 #-----------------------------------------------------------------------
 
 resource "azurerm_public_ip" "test" {
-  name                         = "acceptanceTestPublicIp1"
+  count                        = "${var.sample-app-count}"
+  name                         = "PublicIp1-${count.index}"
   location                     = "${azurerm_resource_group.test.location}"
   resource_group_name          = "${azurerm_resource_group.test.name}"
   public_ip_address_allocation = "dynamic"
