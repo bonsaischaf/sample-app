@@ -27,6 +27,9 @@ resource "azurerm_resource_group" "test" {
 #-----------------------------------------------------------------------
 
 #Assume that custom image has been already created in the 'customimage' resource group
+# !!! Die img-Gruppe muss vor dem deployment angelegt sein.
+# Im realfall würde man hier zwei repos anlegen (1) Terraform-base (2) Terraform-deployment,
+# wobei (1) zur not Manuell getriggert wird. Usecase z.B. (1) Baut die CICD-Infrastruktur auf.
 data "azurerm_resource_group" "image" {
   name = "cschaffe-img"
 }
@@ -49,6 +52,8 @@ resource "azurerm_subnet" "test" {
   virtual_network_name = "${azurerm_virtual_network.test.name}"
   address_prefix       = "10.0.2.0/24"
 }
+
+
 
 resource "azurerm_network_interface" "test" {
   # count wird angelegt und auf var.sample-app-count (idx=0, val=1) initialisiert.
@@ -131,7 +136,13 @@ resource "azurerm_virtual_machine" "test" {
 #   }
 # }
 
-
+  ####   #######      #####
+##       ##          ##
+##       ##         ##
+  ###    #######    ##
+    ##   ##         ##
+    ##   ##          ##
+####     #######      #####
 #-----------------------------------------------------------------------
 #https://www.terraform.io/docs/providers/azurerm/r/network_security_group.html
 #-----------------------------------------------------------------------
@@ -172,6 +183,13 @@ resource "azurerm_network_security_group" "test" {
   }
 }
 
+##         ######
+##         ##   ##
+##         ##   ##
+##         ######
+##         ##   ##
+##         ##   ##
+#########  ######
 
 #-----------------------------------------------------------------------
 # https://www.terraform.io/docs/providers/azurerm/r/availability_set.html
@@ -189,13 +207,6 @@ resource "azurerm_availability_set" "test" {
   }
 }
 
-##         ######
-##         ##   ##
-##         ##   ##
-##         ######
-##         ##   ##
-##         ##   ##
-#########  ######
 
 #-----------------------------------------------------------------------
 # https://www.terraform.io/docs/providers/azurerm/r/loadbalancer.html#sku
@@ -242,6 +253,7 @@ resource "azurerm_lb_rule" "test" {
 resource "azurerm_lb_probe" "test-LB" {
   resource_group_name = "${azurerm_resource_group.test.name}"
   loadbalancer_id     = "${azurerm_lb.test-LB.id}"
-  name                = "ssh-running-probe"
-  port                = 22
+  name                = "http-running-probe"
+  port                = 8080
+  protocol            = "HTTP"
 }
