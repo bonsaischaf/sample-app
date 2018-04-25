@@ -12,7 +12,8 @@ pipeline {
     PACKER_CLIENT_SECRET=credentials('PACKER_CLIENT_SECRET_CSCHAFFE')
     WORKSPACE=pwd()
 
-    TF_VAR_IMAGE_NAME="cschaffe-${env.GIT_COMMIT}-${env.BUILD_ID}"
+    //TF_VAR_IMAGE_NAME="cschaffe-${env.GIT_COMMIT}-${env.BUILD_ID}"
+    TF_VAR_IMAGE_NAME="cschaffe"
   }
   stages {
 
