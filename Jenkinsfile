@@ -71,7 +71,7 @@ pipeline {
     }
   }
   post {
-    alwayys {
+    always {
       // clean up workspace
       echo 'Cleaning up directory'
       deleteDir()
